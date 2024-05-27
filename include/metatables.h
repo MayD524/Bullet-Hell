@@ -149,6 +149,7 @@ static const char* BulletOwnerStrings[] = {
 static FieldMeta BulletMeta[] = {
     FIELD_ENUM(t_BulletData, owner, BulletOwnerStrings),
     FIELD_FLOAT(t_BulletData, damage),
+    FIELD_STRUCT(t_BulletData, owner_entity, EntityMeta),
     { NULL, 0, 0, NULL, NULL, NULL, 0, 0 }
 };
 

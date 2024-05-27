@@ -29,8 +29,12 @@ void push_linked_list_to_lua(lua_State* L, void* struct_ptr, FieldMeta* meta) {
 }
 
 void push_struct_to_lua(lua_State* L, void* struct_ptr, FieldMeta* meta) {
-    lua_newtable(L);  // Create a new table and push it onto the stack
 
+    if (struct_ptr==NULL) {
+        lua_pushnil(L);
+    }
+
+    lua_newtable(L);  // Create a new table and push it onto the stack
     for (int i = 0; meta[i].name != NULL; i++) {
         lua_pushstring(L, meta[i].name);  // Push the field name
 

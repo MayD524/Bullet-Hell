@@ -5,6 +5,7 @@ local bh = require("bh")
 bh.register_function(bh.FunctionType.ON_START, function ()
     _G.player = bh.get_entity_by_name(bh.PLAYER_LOCAL_NAME)
     _G.screen = bh.get_screen_size()
+    _G.timer  = 0
 end)
 
 bh.register_function(bh.FunctionType.POST_RENDER, function()
@@ -50,6 +51,8 @@ bh.register_function(bh.FunctionType.UPDATE, function (delta_time)
 
     score = score + (bh.PLAYER_SCORE_PER_SECOND * delta_time)
     bh.set_player_score(_G.player, score)
+
+    _G.timer = _G.timer + delta_time
 end)
 
 bh.register_function(bh.FunctionType.ON_DESTROY, function ()

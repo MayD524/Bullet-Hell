@@ -94,7 +94,12 @@ void update_player(Player* p, float dt) {
                                         PLAYER_PROJECTILE_SCALE, 
                                         PLAYER_PROJECTILE_DAMAGE, 0);
             data->bullet_cooldown = PLAYER_SHOOT_DELAY;
+            
+            t_BulletData* b_data = (t_BulletData*)b->entity_data;
+            b_data->owner_entity = p;
+
             b->max_life_time = PLAYER_PROJECTILE_LIFETIME;
+
 
             add_tag(b, PLAYER_PROJECTILE_TAG);
             print_tags(b);

@@ -29,7 +29,7 @@ M.PlayerClass = {
 
 --#region Constants
 M.PLAYER_SCORE_PER_LEVEL      = 1000
-M.PLAYER_SCORE_PER_SECOND     = 5
+M.PLAYER_SCORE_PER_SECOND     = 0.5
 M.PLAYER_SCORE_PER_KILL       = 100
 M.PLAYER_SCORE_PER_DEATH      = -100
 M.POWER_MULTIPLIER            = 10
@@ -39,6 +39,7 @@ M.PROJECTILES_PER_POWER_LEVEL = 10
 M.STARTING_SCORE              = 0
 M.STARTING_LIVES              = 3
 M.STARTING_POWER              = 1
+M.ENEMY_TAG                   = "ENEMY"
 M.PLAYER_TAG                  = "PLAYER"
 M.PLAYER_LOCAL_NAME           = "LOCAL_PLAYER"
 M.PLAYER_PROJECTILE_TAG       = "PLAYER_BULLET"
@@ -238,7 +239,7 @@ M.get_entity_by_tag = function(tag)
     local num_entities = M.get_entity_count()
     for i = 0, num_entities - 1 do
         local entity = M.get_entity(i)
-        if M.has_tag(entity, tag) then
+        if M.has_tag(entity, tag) and M.is_entity_active(entity) then
             return entity
         end
     end
@@ -255,7 +256,7 @@ M.get_all_entities_with_tag = function(tag)
 
     for i = 0, num_entities-1 do
         local entity = M.get_entity(i)
-        if M.has_tag(entity, tag) then
+        if M.has_tag(entity, tag) and M.is_entity_active(entity) then
             table.insert(entity_list, entity)
         end
     end
@@ -267,6 +268,9 @@ end
 ---@param entity userdata
 ---@return boolean
 M.enemy_has_move_target = function (entity)
+    if not M.is_entity_active(entity) then
+        return false
+    end
     local x, y, wait, speed_mult = M.get_enemy_move_target(entity)
     return x ~= -1 and y ~= -1 and wait ~= -1 and speed_mult ~= -1
 end

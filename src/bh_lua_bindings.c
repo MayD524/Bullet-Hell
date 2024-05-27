@@ -59,12 +59,14 @@ int lua_create_entity(lua_State *L) {
 
 int lua_is_entity_active(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     lua_pushboolean(L, !entity || entity->is_active);
     return 1;
 }
 
 int lua_get_position(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     if (!entity) {
         panic("lua_get_position: entity is null");
     }
@@ -76,6 +78,7 @@ int lua_get_position(lua_State *L) {
 
 int lua_set_position(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
 
     if (!entity) {
         panic("lua_get_position: entity is null");
@@ -111,6 +114,7 @@ int lua_get_entity(lua_State *L) {
 
 int lua_print_movement(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     print_movement(entity);
     return 0;
 }
@@ -125,6 +129,7 @@ int lua_are_entities_colliding(lua_State *L) {
 
 int lua_deal_damage(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     float damage = (float)lua_tonumber(L, 2);
     entity->health -= damage;
     return 0;
@@ -132,6 +137,7 @@ int lua_deal_damage(lua_State *L) {
 
 int lua_set_entity_active(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     bool active = lua_toboolean(L, 2);
     entity->is_active = active;
     return 0;
@@ -139,12 +145,14 @@ int lua_set_entity_active(lua_State *L) {
 
 int lua_print_tags(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     print_tags(entity);
     return 0;
 }
 
 int lua_add_tag(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     const char* tag = lua_tostring(L, 2);
     add_tag(entity, tag);
     return 0;
@@ -152,6 +160,7 @@ int lua_add_tag(lua_State *L) {
 
 int lua_get_tags(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     const char** tags = get_tags(entity);
 
     lua_newtable(L);
@@ -164,6 +173,7 @@ int lua_get_tags(lua_State *L) {
 
 int lua_remove_tag_at(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     int index = lua_tointeger(L, 2);
     remove_tag_at(entity, index);
     return 0;
@@ -171,6 +181,7 @@ int lua_remove_tag_at(lua_State *L) {
 
 int lua_remove_tag(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     const char* tag = lua_tostring(L, 2);
     remove_tag(entity, tag);
     return 0;
@@ -178,6 +189,7 @@ int lua_remove_tag(lua_State *L) {
 
 int lua_has_tag(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     const char* tag = lua_tostring(L, 2);
     int result = has_tag(entity, tag);
     lua_pushboolean(L, result != -1);
@@ -186,6 +198,7 @@ int lua_has_tag(lua_State *L) {
 
 int lua_remove_all_tags(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     remove_all_tags(entity);
     return 0;
 }
@@ -226,6 +239,7 @@ int lua_create_enemy(lua_State *L) {
 
 int lua_set_enemy_data(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_EnemyData* enemy_data = (t_EnemyData*)entity->entity_data;
     if (!enemy_data) {
         return -1;
@@ -238,6 +252,7 @@ int lua_set_enemy_data(lua_State *L) {
 
 int lua_get_enemy_data(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_EnemyData* enemy_data = (t_EnemyData*)entity->entity_data;
     if (enemy_data) {
         lua_pushnumber(L, enemy_data->move_cooldown);
@@ -250,6 +265,7 @@ int lua_get_enemy_data(lua_State *L) {
 
 int lua_set_enemy_move_target(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
 
     Vector2 position = { (float)lua_tonumber(L, 2), (float)lua_tonumber(L, 3) };
     float wait_time = (float)lua_tonumber(L, 4);
@@ -262,6 +278,7 @@ int lua_set_enemy_move_target(lua_State *L) {
 
 int lua_get_enemy_move_target(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_EnemyData* enemy_data = (t_EnemyData*)entity->entity_data;
 
     if (enemy_data && enemy_data->move_target) {
@@ -282,6 +299,7 @@ int lua_get_enemy_move_target(lua_State *L) {
 
 int lua_get_player_score(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
 
     if (player_data) {
@@ -295,6 +313,7 @@ int lua_get_player_score(lua_State *L) {
 
 int lua_set_player_score(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -308,6 +327,7 @@ int lua_set_player_score(lua_State *L) {
 
 int lua_add_player_power(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -319,6 +339,9 @@ int lua_add_player_power(lua_State *L) {
 }
 int lua_remove_player_power(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -330,6 +353,9 @@ int lua_remove_player_power(lua_State *L) {
 }
 int lua_get_player_power(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -342,6 +368,9 @@ int lua_get_player_power(lua_State *L) {
 
 int lua_add_player_life(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -355,6 +384,9 @@ int lua_add_player_life(lua_State *L) {
 }
 int lua_remove_player_life(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -367,6 +399,9 @@ int lua_remove_player_life(lua_State *L) {
 }
 int lua_get_player_lives(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -379,6 +414,8 @@ int lua_get_player_lives(lua_State *L) {
 
 int lua_get_player_class(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -390,6 +427,9 @@ int lua_get_player_class(lua_State *L) {
 }
 int lua_set_player_class(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     t_PlayerData* player_data = (t_PlayerData*)entity->entity_data;
     
     if (!player_data) {
@@ -404,6 +444,9 @@ int lua_set_player_class(lua_State *L) {
 
 int lua_heal_entity(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     float amount = (float)lua_tonumber(L, 2);
     entity->health += amount;
     return 0;
@@ -411,7 +454,11 @@ int lua_heal_entity(lua_State *L) {
 
 int lua_get_entity_health(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
-    lua_pushnumber(L, entity->health);
+    if (entity == NULL) { return 0; }
+    if (!entity)
+        lua_pushnil(L);
+    else
+        lua_pushnumber(L, entity->health);
     return 1;
 }
 
@@ -497,6 +544,9 @@ int lua_draw_circle(lua_State *L) {
 
 int lua_set_entity_rotation(lua_State *L){ 
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     float rotation = (float)lua_tonumber(L, 2);
     entity->rotation = rotation;
     return 0;
@@ -504,7 +554,11 @@ int lua_set_entity_rotation(lua_State *L){
 
 int lua_get_entity_rotation(lua_State *L){ 
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
-    lua_pushnumber(L, entity->rotation);
+    if (entity == NULL) { return 0; }
+    if (!entity)
+        lua_pushnil(L);
+    else
+        lua_pushnumber(L, entity->rotation);
     return 1;
 }
 
@@ -529,9 +583,10 @@ int lua_create_bullet(lua_State *L) {
 
 int lua_get_bullet_data(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     t_BulletData* bullet_data = (t_BulletData*)entity->entity_data;
     
-    if (!bullet_data) {
+    if (!bullet_data || !entity) {
         lua_pushnil(L);
         return 1;
     }
@@ -542,12 +597,18 @@ int lua_get_bullet_data(lua_State *L) {
 
 int lua_set_scale(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     float scale = (float)lua_tonumber(L, 2);
     entity->scale = scale;
     return 0;
 }
 int lua_set_velocity(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
+
     Vector2 velocity = bh_lua_vec2_unpack(L, 2);
     entity->velocity = velocity;
     return 0;
@@ -555,25 +616,34 @@ int lua_set_velocity(lua_State *L) {
 
 int lua_get_velocity(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     push_struct_to_lua(L, &entity->velocity, Vector2Meta);
     return 1;
 }
 
 int lua_set_rotation(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
+    if (entity == NULL) { return 0; }
     float rotation = (float)lua_tonumber(L, 2);
     entity->rotation = rotation;
+    return 0;
 }
 
 int lua_get_rotation(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
+    if (entity == NULL) { return 0; }
     lua_pushnumber(L, entity->rotation);
     return 1;
 }
 
 int lua_get_entity_table(lua_State *L) {
     t_Entity* entity = (t_Entity*)lua_touserdata(L, 1);
-    push_struct_to_lua(L, entity, EntityMeta);
+    if (entity == NULL) { return 0; }
+    if (entity != NULL && entity->is_active) 
+        push_struct_to_lua(L, entity, EntityMeta);
+    else
+        lua_pushnil(L);
     return 1;
 }
 

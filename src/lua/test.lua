@@ -6,7 +6,7 @@ local bindings = require("bh")
 
 bindings.register_function(bindings.FunctionType.ON_START, function ()
     local entity = bindings.create_enemy("D:\\bullet_hell\\resources\\log_t.png", 100, 100, 10, 1, 10, 10)
-    bindings.add_tag(entity, "hello")
+    bindings.add_tag(entity, "BASE_ENEMY")
     bindings.print_tags(entity)
 
     bindings.set_enemy_move_target(entity, 200, 200, 5, 50)

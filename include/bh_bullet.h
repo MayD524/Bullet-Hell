@@ -20,6 +20,7 @@ typedef enum e_BulletOwner {
 typedef struct s_BulletData {
     t_BulletOwner owner;
     float damage;
+    t_Entity* owner_entity;
 } t_BulletData;
 
 t_BulletData* create_bullet_data(t_BulletOwner owner, float damage);

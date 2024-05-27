@@ -95,6 +95,10 @@ void update_enemy(Enemy* enemy, float delta_time){
             enemy->health -= data->damage;
             entity->is_active = false;
             printf("enemy health: %f\n", enemy->health);
+
+            t_PlayerData* player_data = (t_PlayerData*)data->owner_entity->entity_data;
+            player_data->player_score += PLAYER_SCORE_PER_KILL;
+
             return; // enemy dead don't bother doing anything
         }
     }

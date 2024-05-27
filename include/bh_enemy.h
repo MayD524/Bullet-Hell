@@ -5,6 +5,7 @@
 
 #include <bh_entity.h>
 #include <bh_bullet.h>
+#include <player.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <raylib.h>
