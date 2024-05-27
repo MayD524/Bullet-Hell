@@ -5,7 +5,6 @@
 #include <bh_enemy.h>
 #include <player.h>
 #include <util.h>
-
 #include <dirent.h> 
 #include <stdio.h> 
 
@@ -59,7 +58,7 @@ int main() {
     load_texture(g_entity_system, PLAYER_TEXTURE_PATH);
     load_texture(g_entity_system, ENEMY_TEXTURE_PATH);
     load_texture(g_entity_system, PLAYER_PROJECTILE_PATH);
-
+    
     Player* player = create_player(g_entity_system, PLAYER_START_POSITION);
     printf("Player: %p\n", player);
     // print_tags(player);
@@ -72,11 +71,7 @@ int main() {
         execute_lua_file(g_lua_context->lua_state, file_search.files[i]);
     }
 
-    // Enemy* enemy = create_enemy(ENEMY_TEXTURE_PATH, ENEMY_START_POSITION, BASE_ENEMY_HEALTH, BASE_ENEMY_SIZE, BASE_ENEMY_DAMAGE, BASE_ENEMY_SPEED);
-    
-    // add_enemy_move_target(enemy, Vector2AddValue(ENEMY_START_POSITION, 50.0f), 0 , 50.0f);
-    // add_enemy_move_target(enemy, Vector2AddValue(enemy->position     , -100.0f), 0, 50.0f);
-    // add_enemy_move_target(enemy, Vector2AddValue(enemy->position     , 150.0f), 0, 50.0f);
+    call_functions(g_lua_context, ON_START);
 
     while (!WindowShouldClose()) {
         

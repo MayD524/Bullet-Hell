@@ -18,7 +18,13 @@ Player* create_player(t_EntitySystem* es, Vector2 start_position) {
     p->health = 100.0f;
 
     t_PlayerData* data = malloc(sizeof(t_PlayerData));
+    data->bullet_speed = PLAYER_PROJECTILE_SPEED;
     data->bullet_cooldown = 0.0f;
+    data->player_score = STARTING_SCORE;
+    data->lives_left = STARTING_LIVES;
+    data->player_power = STARTING_POWER;
+    data->player_class = DEFAULT_PLAYER_CLASS;
+
     p->entity_data = data;
 
     p->update = update_player;
@@ -83,10 +89,10 @@ void update_player(Player* p, float dt) {
             Bullet* b = create_bullet(PLAYER_PROJECTILE_PATH, 
                                         BULLET_PLAYER, 
                                         start_position, 
-                                        PLAYER_PROJECTILE_SPEED, 
+                                        data->bullet_speed, 
                                         100, 
                                         PLAYER_PROJECTILE_SCALE, 
-                                        PLAYER_PROJECTILE_DAMAGE);
+                                        PLAYER_PROJECTILE_DAMAGE, 0);
             data->bullet_cooldown = PLAYER_SHOOT_DELAY;
             b->max_life_time = PLAYER_PROJECTILE_LIFETIME;
 
@@ -94,15 +100,15 @@ void update_player(Player* p, float dt) {
             print_tags(b);
         }
     }
-    for (int i = 0; i < g_entity_system->num_entities; ++i) {
-        t_Entity* e = get_entity(g_entity_system, i);
-        if (e == NULL || !e->is_active || 
-            has_tag(e, PLAYER_TAG) != -1 || has_tag(e, PLAYER_PROJECTILE_TAG)!= -1) {
-            continue;
-        }
+    // for (int i = 0; i < g_entity_system->num_entities; ++i) {
+    //     t_Entity* e = get_entity(g_entity_system, i);
+    //     if (e == NULL || !e->is_active || 
+    //         has_tag(e, PLAYER_TAG) != -1 || has_tag(e, PLAYER_PROJECTILE_TAG)!= -1) {
+    //         continue;
+    //     }
 
-        if (are_entities_colliding(p, e)) {
-            // printf("Collision! between %s and %s\n", p->entity_name, e->entity_name);
-        }
-    }
+    //     if (are_entities_colliding(p, e)) {
+    //         // printf("Collision! between %s and %s\n", p->entity_name, e->entity_name);
+    //     }
+    // }
 }

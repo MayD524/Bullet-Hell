@@ -4,16 +4,40 @@ package.path = package.path .. ';D:/bullet_hell/build/scripts/?.lua'
 
 local bindings = require("bh")
 
-print("------------------------")
-local entity = bindings.create_enemy("D:\\bullet_hell\\resources\\log_t.png", 100, 100, 10, 1, 10, 10)
-bindings.add_tag(entity, "hello")
-bindings.print_tags(entity)
+bindings.register_function(bindings.FunctionType.ON_START, function ()
+    local entity = bindings.create_enemy("D:\\bullet_hell\\resources\\log_t.png", 100, 100, 10, 1, 10, 10)
+    bindings.add_tag(entity, "hello")
+    bindings.print_tags(entity)
 
-bindings.set_enemy_move_target(entity, 200, 200, 5, 50)
-bindings.set_enemy_move_target(entity, 500, 500, 5, 50)
-print("--------------------------")
+    bindings.set_enemy_move_target(entity, 200, 200, 5, 50)
+    -- bindings.set_enemy_move_target(entity, 500, 500, 5, 50)
+end)
+
+bindings.register_function(bindings.FunctionType.POST_RENDER, function()
+    local center = bindings.create_vec2(100, 100)
+    bindings.draw_circle(center, 10, bindings.Colors.RED, 10, true)
+end)
 
 bindings.register_function(bindings.FunctionType.UPDATE, function(delta_time)
+    local entity = bindings.get_entity_by_tag("hello")
+
+    if entity == nil then
+        return
+    end
+
+    -- if bindings.enemy_has_move_target(entity) then
+    --     print("has move target...")
+    -- else
+    --     print("No move target")
+    -- end
+
+    -- if entity == nil then
+    --     print("No entity with tag hello")
+    -- end
+
+    -- print(entity)
+
+    
     -- local e = bindings.get_entity_by_name("test")    
     -- if bindings.is_entity_active(e) == false then
     --     return

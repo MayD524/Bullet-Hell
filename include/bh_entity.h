@@ -33,7 +33,7 @@ typedef enum {
 
 typedef struct s_Tag {
     const char* tag;
-    int tag_id;
+    unsigned int tag_id;
 
     struct s_Tag* next;
     struct s_Tag* prev;

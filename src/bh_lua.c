@@ -58,22 +58,54 @@ void bh_lua_error(lua_State* L) {
 
 #pragma region C -> LUA 
 
-void register_function(LuaContext* L, const char* name, lua_CFunction func) {
-
-}
 
 void register_base_functions(LuaContext* context) {
+    // player score functions
+    lua_register(context->lua_state, "get_player_score"        , lua_get_player_score        );
+    lua_register(context->lua_state, "set_player_score"        , lua_set_player_score        );
     
-    lua_register(context->lua_state, "register_function"       , register_lua_function       );
+    // player power functions
+    lua_register(context->lua_state, "add_player_power"        , lua_add_player_power        );
+    lua_register(context->lua_state, "remove_player_power"     , lua_remove_player_power     );
+    lua_register(context->lua_state, "get_player_power"        , lua_get_player_power        );
+    
+    // player life functions
+    lua_register(context->lua_state, "add_player_life"         , lua_add_player_life         );
+    lua_register(context->lua_state, "remove_player_life"      , lua_remove_player_life      );
+    lua_register(context->lua_state, "get_player_lives"        , lua_get_player_lives        );
+
+    // player class
+    lua_register(context->lua_state, "get_player_class"        , lua_get_player_class        );
+    lua_register(context->lua_state, "set_player_class"        , lua_set_player_class        );
+
+    // basic entity functions
     lua_register(context->lua_state, "set_entity_active"       , lua_set_entity_active       );
-    lua_register(context->lua_state, "is_entity_active"        , lua_is_entity_active        );
     lua_register(context->lua_state, "get_entity_count"        , lua_get_entity_count        );
+    lua_register(context->lua_state, "is_entity_active"        , lua_is_entity_active        );
     lua_register(context->lua_state, "create_entity"           , lua_create_entity           );
     lua_register(context->lua_state, "get_entity"              , lua_get_entity              );
+    lua_register(context->lua_state, "heal_entity"             , lua_heal_entity             );
+    lua_register(context->lua_state, "get_entity_health"       , lua_get_entity_health       );
     lua_register(context->lua_state, "deal_damage"             , lua_deal_damage             );
     lua_register(context->lua_state, "get_entity_by_name"      , lua_get_entity_by_name      );
     lua_register(context->lua_state, "print_movement"          , lua_print_movement          );
     lua_register(context->lua_state, "are_entities_colliding"  , lua_are_entities_colliding  );
+    lua_register(context->lua_state, "set_velocity"            , lua_set_velocity            );
+    lua_register(context->lua_state, "get_velocity"            , lua_get_velocity            );
+    lua_register(context->lua_state, "set_position"            , lua_set_position            );
+    lua_register(context->lua_state, "get_position"            , lua_get_position            );
+    lua_register(context->lua_state, "set_rotation"            , lua_set_rotation            );
+    lua_register(context->lua_state, "get_rotation"            , lua_get_rotation            );
+    lua_register(context->lua_state, "get_entity_data"         , lua_get_entity_table        );
+
+    // Bullet functions
+    lua_register(context->lua_state, "create_bullet"           , lua_create_bullet           );
+    lua_register(context->lua_state, "get_bullet_data"         , lua_get_bullet_data         );
+
+    // LUA -> C functions
+    lua_register(context->lua_state, "register_function"       , register_lua_function       );
+    
+    // tag functions
     lua_register(context->lua_state, "print_tags"              , lua_print_tags              );
     lua_register(context->lua_state, "add_tag"                 , lua_add_tag                 );
     lua_register(context->lua_state, "get_tags"                , lua_get_tags                );
@@ -81,27 +113,41 @@ void register_base_functions(LuaContext* context) {
     lua_register(context->lua_state, "remove_tag"              , lua_remove_tag              );
     lua_register(context->lua_state, "has_tag"                 , lua_has_tag                 );
     lua_register(context->lua_state, "remove_all_tags"         , lua_remove_all_tags         );
+    
+    // texture functions
     lua_register(context->lua_state, "load_texture"            , lua_load_texture            );
     lua_register(context->lua_state, "get_texture"             , lua_get_texture             );
+    
+    // enemy functions
     lua_register(context->lua_state, "create_enemy"            , lua_create_enemy            );
     lua_register(context->lua_state, "set_enemy_data"          , lua_set_enemy_data          );
     lua_register(context->lua_state, "get_enemy_data"          , lua_get_enemy_data          );
     lua_register(context->lua_state, "set_enemy_move_target"   , lua_set_enemy_move_target   );
     lua_register(context->lua_state, "get_enemy_move_target"   , lua_get_enemy_move_target   );
-    lua_register(context->lua_state, "set_position"            , lua_set_position            );
-    lua_register(context->lua_state, "get_position"            , lua_get_position            );
+    
+
+    // bullet functions
+    lua_register(context->lua_state, "create_bullet"           , lua_create_bullet           );
+    lua_register(context->lua_state, "get_bullet_data"         , lua_get_bullet_data         );
+
+    // screen functions
+    lua_register(context->lua_state, "get_screen_size"         , lua_get_screen_size         );
+    
+    // drawing functions
+    lua_register(context->lua_state, "draw_text"               , lua_draw_text               );
+    lua_register(context->lua_state, "draw_texture"            , lua_draw_texture            );
+    // lua_register(context->lua_state, "draw_sprite"             , lua_draw_sprite             );
+    // lua_register(context->lua_state, "draw_sprite_batch"       , lua_draw_sprite_batch       );
+    // lua_register(context->lua_state, "draw_texture_batch"      , lua_draw_texture_batch      );
+    lua_register(context->lua_state, "draw_line"               , lua_draw_line               );
+    lua_register(context->lua_state, "draw_rectangle"          , lua_draw_rectangle          );
+    lua_register(context->lua_state, "draw_triangle"           , lua_draw_triangle           );   
+    lua_register(context->lua_state, "draw_circle"             , lua_draw_circle             );
 }
 
 #pragma endregion
 
 #pragma region LUA -> C
-void call_lua_function(lua_State* l, const char *function_name){
-
-}
-
-void register_global_function(lua_State* l, const char *name, lua_CFunction func){
-
-}
 int register_lua_function(lua_State* l){
     if (g_lua_context == NULL) {
         panic ("Could not get LuaContext from upvalue");

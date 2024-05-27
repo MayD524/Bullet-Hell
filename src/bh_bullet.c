@@ -8,7 +8,7 @@ t_BulletData* create_bullet_data(t_BulletOwner owner, float damage) {
     return data;
 }
 
-Bullet* create_bullet(char* texture, t_BulletOwner owner, Vector2 start_position, Vector2 velocity, float health, float size, float damage){
+Bullet* create_bullet(char* texture, t_BulletOwner owner, Vector2 start_position, Vector2 velocity, float health, float size, float damage, float rotation){
     char name[16];
     sprintf_s(name, sizeof(name), "bullet_%d_%d\0", (int)owner, GetRandomValue(0, 100000));
 
@@ -30,6 +30,8 @@ Bullet* create_bullet(char* texture, t_BulletOwner owner, Vector2 start_position
     strcpy_s(bullet->entity_name, sizeof(bullet->entity_name), name);
     bullet->entity_data = create_bullet_data(owner, damage);
     add_tag(bullet, BULLET_TAG);
+
+    bullet->rotation = rotation;
     
     return bullet;
     

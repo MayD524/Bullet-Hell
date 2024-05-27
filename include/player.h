@@ -28,8 +28,32 @@ typedef t_Entity Player;
 static const Vector2 PLAYER_PROJECTILE_SPEED = { 0.0f, -500.0f };
 static const Vector2 PLAYER_START_POSITION   = { 450.0f, 800.0f };
 
+
+typedef enum {
+    DEFAULT
+} PlayerClass;
+
+#define PLAYER_SCORE_PER_LEVEL      1000
+#define PLAYER_SCORE_PER_SECOND     10
+#define PLAYER_SCORE_PER_KILL       100
+#define PLAYER_SCORE_PER_DEATH      -100
+
+
+#define POWER_MULTIPLIER            10
+#define POWER_PER_LEVEL             100
+#define DEFAULT_PLAYER_CLASS        DEFAULT
+#define PROJECTILES_PER_POWER_LEVEL 10
+#define STARTING_SCORE              0
+#define STARTING_LIVES              3
+#define STARTING_POWER              1
+
 typedef struct s_PlayerData {
+    long double player_score;
+    long double player_power;
+    int lives_left;
     int bullet_cooldown;
+    PlayerClass player_class;
+    Vector2 bullet_speed;
 } t_PlayerData;
 
 void on_player_destroy(Player* p);

@@ -24,7 +24,7 @@ typedef struct s_BulletData {
 
 t_BulletData* create_bullet_data(t_BulletOwner owner, float damage);
 
-Bullet* create_bullet(char* texture, t_BulletOwner owner, Vector2 start_position, Vector2 velocity, float health, float size, float damage);
+Bullet* create_bullet(char* texture, t_BulletOwner owner, Vector2 start_position, Vector2 velocity, float health, float size, float damage, float rotation);
 void destroy_bullet(Bullet* bullet);
 
 #endif

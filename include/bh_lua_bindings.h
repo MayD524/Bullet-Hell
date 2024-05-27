@@ -6,7 +6,21 @@
 #include <lua/lua.h>
 #include <raylib.h>
 #include <bh_entity.h>
+#include <player.h>
 #include <bh_enemy.h>
+#include <metatables.h>
+
+// lua functions for raylib
+int lua_draw_text(lua_State *L);
+int lua_draw_texture(lua_State *L);
+// int lua_draw_sprite(lua_State *L);
+// int lua_draw_sprite_batch(lua_State *L);
+// int lua_draw_texture_batch(lua_State *L);
+// draw shapes
+int lua_draw_line(lua_State *L);
+int lua_draw_rectangle(lua_State *L);
+int lua_draw_triangle(lua_State *L);
+int lua_draw_circle(lua_State *L);
 
 // Lua bindings for entity functions
 int lua_create_entity(lua_State *L);
@@ -41,5 +55,37 @@ int lua_set_enemy_data(lua_State *L);
 int lua_create_enemy_move_target(lua_State *L);
 int lua_get_enemy_move_target(lua_State *L);
 int lua_set_enemy_move_target(lua_State *L);
+
+int lua_get_player_score(lua_State *L);
+int lua_set_player_score(lua_State *L);
+
+int lua_add_player_power(lua_State *L);
+int lua_remove_player_power(lua_State *L);
+int lua_get_player_power(lua_State *L);
+
+int lua_add_player_life(lua_State *L);
+int lua_remove_player_life(lua_State *L);
+int lua_get_player_lives(lua_State *L);
+
+int lua_get_player_class(lua_State *L);
+int lua_set_player_class(lua_State *L);
+
+int lua_heal_entity(lua_State *L);
+int lua_get_entity_health(lua_State *L);
+
+int lua_set_entity_rotation(lua_State *L);
+int lua_get_entity_rotation(lua_State *L);
+
+int lua_create_bullet(lua_State *L);
+int lua_get_bullet_data(lua_State *L);
+
+int lua_get_entity_table(lua_State *L);
+int lua_set_scale(lua_State *L);
+int lua_set_velocity(lua_State *L);
+int lua_get_velocity(lua_State *L);
+int lua_set_rotation(lua_State *L);
+int lua_get_rotation(lua_State *L);
+int lua_get_screen_size(lua_State *L);
+
 
 #endif // BH_LUA_BINDINGS_H

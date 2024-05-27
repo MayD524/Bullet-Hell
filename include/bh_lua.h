@@ -8,9 +8,11 @@
 #include <lua/lauxlib.h>
 
 #include <util.h>
+#include <metatables.h>
 #include <bh_lua_bindings.h>
 
 #define INITIAL_CAPACITY 10
+
 
 typedef enum {
     UPDATE,

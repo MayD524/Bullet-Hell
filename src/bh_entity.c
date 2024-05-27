@@ -91,6 +91,7 @@ void render(t_EntitySystem* entity_system) {
 
         DrawTexturePro(texture, e->source, destRec, e->sprite_origin, 0, WHITE);
     }
+
 }
 
 #pragma endregion

@@ -1,0 +1,41 @@
+local entity = {
+  ["texture"] = {
+    ["mipmaps"] = 1,
+    ["format"] = 7,
+    ["height"] = 100,
+    ["id"] = 3,
+    ["width"] = 100,
+  },
+  ["entity_name"] = LOCAL_PLAYER,
+  ["health"] = 100.0,
+  ["entity_data"] = 0x00000265dc005f90,
+  ["scale"] = 1.0,
+  ["sprite_origin"] = {
+    ["x"] = 100.0,
+    ["y"] = 100.0,
+  },
+  ["friction"] = 0.0,
+  ["max_life_time"] = -1.0,
+  ["is_active"] = true,
+  ["velocity"] = {
+    ["x"] = 0.0,
+    ["y"] = 0.0,
+  },
+  ["layer"] = 32761,
+  ["speed"] = 250.0,
+  ["current_life_time"] = 1.0073490142822,
+  ["priority_rank"] = PLAYER,
+  ["num_tags"] = 1,
+  ["source"] = {
+    ["x"] = 0.0,
+    ["height"] = 100.0,
+    ["width"] = 100.0,
+    ["y"] = 0.0,
+  },
+  ["mass"] = 1.0,
+  ["rotation"] = 0.0,
+  ["position"] = {
+    ["x"] = 450.0,
+    ["y"] = 800.0,
+  },
+}
