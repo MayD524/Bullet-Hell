@@ -14,16 +14,19 @@ bindings.register_function(bindings.FunctionType.ON_START, function ()
 end)
 
 bindings.register_function(bindings.FunctionType.POST_RENDER, function()
-    local center = bindings.create_vec2(100, 100)
-    bindings.draw_circle(center, 10, bindings.Colors.RED, 10, true)
 end)
 
 bindings.register_function(bindings.FunctionType.UPDATE, function(delta_time)
-    local entity = bindings.get_entity_by_tag("hello")
+    local entity = bindings.get_entity_by_tag("TEST_BULLET")
 
     if entity == nil then
         return
     end
+
+    -- local b_data = bindings.get_entity_data(entity)
+    -- if b_data then
+    --     print(bindings.dump(b_data))
+    -- end
 
     -- if bindings.enemy_has_move_target(entity) then
     --     print("has move target...")

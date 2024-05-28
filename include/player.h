@@ -49,7 +49,7 @@ typedef enum {
 
 typedef struct s_PlayerData {
     long double player_score;
-    long double player_power;
+    long player_power;
     int lives_left;
     int bullet_cooldown;
     PlayerClass player_class;

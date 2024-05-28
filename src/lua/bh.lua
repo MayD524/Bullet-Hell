@@ -22,6 +22,12 @@ M.PriorityRank = {
     PLAYER = 5,
 }
 
+M.BulletOwner = {
+    BULLET_NONE = 0,
+    BULLET_ENEMY = 1,
+    BULLET_PLAYER = 2,
+}
+
 M.PlayerClass = {
     DEFAULT = 0
 }
@@ -31,7 +37,8 @@ M.PlayerClass = {
 M.PLAYER_SCORE_PER_LEVEL      = 1000
 M.PLAYER_SCORE_PER_SECOND     = 0.5
 M.PLAYER_SCORE_PER_KILL       = 100
-M.PLAYER_SCORE_PER_DEATH      = -100
+M.PLAYER_SCORE_PER_DEATH      = 100 -- negative
+M.PLAYER_SCORE_PER_GOT_HIT    = 10 -- negative
 M.POWER_MULTIPLIER            = 10
 M.POWER_PER_LEVEL             = 100
 M.DEFAULT_PLAYER_CLASS        = M.PlayerClass.DEFAULT
@@ -45,6 +52,7 @@ M.PLAYER_LOCAL_NAME           = "LOCAL_PLAYER"
 M.PLAYER_PROJECTILE_TAG       = "PLAYER_BULLET"
 M.BULLET_TAG                  = "PROJECTILE"
 M.DEFAULT_BULLET_LIFETIME     = 10
+M.BASE_ENEMY_FIRE_RATE        = 5
 
 --#endregion
 
@@ -66,7 +74,7 @@ local function dummy_has_tag(entity, tag) end
 local function dummy_remove_all_tags(entity) end
 local function dummy_load_texture(texturePath) end
 local function dummy_get_texture(textureID) end
-local function dummy_set_enemy_data(entity, moveCooldown, shootCooldown, damage) end
+local function dummy_set_enemy_data(entity, data) end
 local function dummy_get_enemy_data(entity) end
 local function dummy_set_enemy_move_target(entity, x, y, waitTime, speedMult) end
 local function dummy_get_enemy_move_target(entity) end
@@ -247,6 +255,22 @@ M.get_entity_by_tag = function(tag)
     return nil
 end
 
+---Create a table with enemy data
+---Do not change total_targets
+---@param total_targets number
+---@param move_cooldown number
+---@param shoot_cooldown number
+---@param damage number
+---@return table
+M.create_enemy_data= function(total_targets, move_cooldown, shoot_cooldown, damage)
+    return {
+        total_targets = total_targets,
+        move_cooldown = move_cooldown,
+        shoot_cooldown = shoot_cooldown,
+        damage = damage
+    }
+end
+
 ---Get an array of all entities with a specific tag
 ---@param tag string
 ---@return table
@@ -373,6 +397,59 @@ M.protect = function(table)
         __metatable = false 
     })
 end
+
+M.tablelen = function (T)
+    local count = 0
+    for _ in pairs(T) do count = count + 1 end
+    return count
+end
+
+-- Define the ShapeType enum
+M.ShapeType = {
+    RECTANGLE = 0,
+    CIRCLE = 1,
+    TRIANGLE = 2
+}
+
+-- Function to convert ShapeType to string
+local function shapeTypeToString(shapeType)
+    if shapeType == M.ShapeType.RECTANGLE then
+        return "RECT"
+    elseif shapeType == M.ShapeType.CIRCLE then
+        return "CIRC"
+    elseif shapeType == M.ShapeType.TRIANGLE then
+        return "TRI"
+    else
+        return "UNKNOWN"
+    end
+end
+
+M.create_texture_str =  function (shapeType, position1, position2, position3, color, thickness, filled)
+    local shapeStr = shapeTypeToString(shapeType)
+    local filledStr = filled and "true" or "false"
+    local result = ""
+
+    if shapeType == M.ShapeType.RECTANGLE then
+        result = string.format("SHAPE:%s:%.2f,%.2f:%.2f,%.2f:%.2f,%.2f:%d,%d,%d,%d:%d:%s",
+            shapeStr, position1.x, position1.y, position2.x, position2.y, 0, 0,
+            color.r, color.g, color.b, color.a, thickness, filledStr)
+    elseif shapeType == M.ShapeType.CIRCLE then
+        result = string.format("SHAPE:%s:%.2f,%.2f:%.2f,%.2f:%.2f,%.2f:%d,%d,%d,%d:%d:%s",
+            shapeStr, position1.x, position1.y, position2.x, 0, 0, 0, 
+            color.r, color.g, color.b, color.a, thickness, filledStr)
+    elseif shapeType == M.ShapeType.TRIANGLE then
+        result = string.format("SHAPE:%s:%.2f,%.2f:%.2f,%.2f:%.2f,%.2f:%d,%d,%d,%d:%d:%s",
+            shapeStr, position1.x, position1.y, position2.x, position2.y, 
+            position3.x, position3.y, color.r, color.g, color.b, color.a, thickness, filledStr)
+    end
+
+    return result
+end
+
+M.get_direction_vector = function(v1, v2, speed)
+    return M.create_vec2((v1['x'] - v2['x']) * speed['x'], (v1['y'] - v2['y']) * speed['y'])
+end
+
 
 --#endregion
 

@@ -8,14 +8,13 @@ Player* create_player(t_EntitySystem* es, Vector2 start_position) {
                                 VEC2_ZERO,
                                 PLAYER, 
                                 -1, 
-                                1.0f, PLAYER_DEFAULT_HEALTH);
+                                0.5f, PLAYER_DEFAULT_HEALTH);
     if (p == NULL) {
         printf("Error creating player...\n");
         panic("Error creating player...");
     }
 
     add_tag(p, PLAYER_TAG);
-    p->health = 100.0f;
 
     t_PlayerData* data = malloc(sizeof(t_PlayerData));
     data->bullet_speed = PLAYER_PROJECTILE_SPEED;
@@ -83,10 +82,10 @@ void update_player(Player* p, float dt) {
         if (data->bullet_cooldown <= 0.0f) {
 
             Vector2 start_position = p->position;
-            start_position.y += 25.0f;
-            start_position.x += 25.0f;
+            start_position.y -= 75.0f;
+            start_position.x -= 75.0f;
             
-            Bullet* b = create_bullet(PLAYER_PROJECTILE_PATH, 
+            Bullet* b = create_bullet("SHAPE:CIRC:149.17,149.17:10.00,0.00:0.00,0.00:255,0,0,255:10:true", 
                                         BULLET_PLAYER, 
                                         start_position, 
                                         data->bullet_speed, 
@@ -102,7 +101,7 @@ void update_player(Player* p, float dt) {
 
 
             add_tag(b, PLAYER_PROJECTILE_TAG);
-            print_tags(b);
+            // print_tags(b);
         }
     }
     // for (int i = 0; i < g_entity_system->num_entities; ++i) {

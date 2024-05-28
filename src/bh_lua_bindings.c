@@ -242,11 +242,9 @@ int lua_set_enemy_data(lua_State *L) {
     if (entity == NULL) { return 0; }
     t_EnemyData* enemy_data = (t_EnemyData*)entity->entity_data;
     if (!enemy_data) {
-        return -1;
+        return 0;
     }
-    enemy_data->move_cooldown = (float)lua_tonumber(L, 2);
-    enemy_data->shoot_cooldown = (float)lua_tonumber(L, 3);
-    enemy_data->damage = (float)lua_tonumber(L, 4);
+    lua_to_struct(L, 2, enemy_data, EnemyMeta);
     return 0;
 }
 
@@ -255,10 +253,8 @@ int lua_get_enemy_data(lua_State *L) {
     if (entity == NULL) { return 0; }
     t_EnemyData* enemy_data = (t_EnemyData*)entity->entity_data;
     if (enemy_data) {
-        lua_pushnumber(L, enemy_data->move_cooldown);
-        lua_pushnumber(L, enemy_data->shoot_cooldown);
-        lua_pushnumber(L, enemy_data->damage);
-        return 3;
+        push_struct_to_lua(L, enemy_data, EnemyMeta);
+        return 1;
     }
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <player.h>
 #include <bh_entity.h>
 #include <bh_bullet.h>
+#include <bh_enemy.h>
 #include <stddef.h>
 
 #include <lua/lua.h>
@@ -149,7 +150,14 @@ static const char* BulletOwnerStrings[] = {
 static FieldMeta BulletMeta[] = {
     FIELD_ENUM(t_BulletData, owner, BulletOwnerStrings),
     FIELD_FLOAT(t_BulletData, damage),
-    FIELD_STRUCT(t_BulletData, owner_entity, EntityMeta),
+    { NULL, 0, 0, NULL, NULL, NULL, 0, 0 }
+};
+
+static FieldMeta EnemyMeta[] = {
+    FIELD_FLOAT(t_EnemyData, total_targets),
+    FIELD_FLOAT(t_EnemyData, move_cooldown),
+    FIELD_FLOAT(t_EnemyData, shoot_cooldown),
+    FIELD_FLOAT(t_EnemyData, damage),
     { NULL, 0, 0, NULL, NULL, NULL, 0, 0 }
 };
 

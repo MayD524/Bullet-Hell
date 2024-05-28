@@ -56,7 +56,7 @@ Enemy* create_enemy(char* texture_path, Vector2 start_position, float health, fl
 
     t_EnemyData* data = malloc(sizeof(t_EnemyData));
     data->damage = damage;
-    data->shoot_cooldown = 0;
+    data->shoot_cooldown = BASE_ENEMY_SHOOT_COOLDOWN;
     data->total_targets = 0;
 
     enemy->entity_data = data;

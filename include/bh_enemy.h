@@ -17,7 +17,7 @@ typedef t_Entity Enemy;
 #define BASE_ENEMY_HEALTH         10
 #define BASE_ENEMY_DAMAGE         1
 #define BASE_ENEMY_SPEED          250.0f
-#define BASE_ENEMY_SHOOT_COOLDOWN 1
+#define BASE_ENEMY_SHOOT_COOLDOWN 5
 #define BASE_ENEMY_SIZE           1.0f
 #define ENEMY_TAG                 "ENEMY"
 #define ENEMY_TEXTURE_PATH        "D:\\bullet_hell\\resources\\enemy.png"
@@ -35,7 +35,6 @@ typedef struct s_EnemyData {
     float total_targets;
     float move_cooldown;
     float shoot_cooldown;
-
     float damage;
 } t_EnemyData;
 

@@ -1,5 +1,106 @@
 #include <bh_entity.h>
 
+#pragma region Shape drawing
+
+ShapeType getShapeType(const char *shapeStr) {
+    if (strcmp(shapeStr, "RECT") == 0) return RECTANGLE;
+    if (strcmp(shapeStr, "CIRC") == 0) return CIRCLE;
+    if (strcmp(shapeStr, "TRI") == 0) return TRIANGLE;
+    return UNKNOWN;
+}
+
+Shape parseShapeString(const char *str) {
+    Shape shape;
+    char shapeStr[5];
+    char filledStr[6];
+    int r, g, b, a;
+
+    sscanf(str, "SHAPE:%4[^:]:%f,%f:%f,%f:%f,%f:%d,%d,%d,%d:%d:%5s",
+           shapeStr, &shape.position1.x, &shape.position1.y,
+           &shape.position2.x, &shape.position2.y, &shape.position3.x,
+           &shape.position3.y, &r, &g, &b, &a, &shape.thickness, filledStr);
+
+    // Assign shape type
+    shape.type = getShapeType(shapeStr);
+
+    // Assign color
+    shape.color = (Color){ r, g, b, a };
+
+    // Handle boolean parsing
+    shape.filled = (strcmp(filledStr, "true") == 0);
+
+    // Default values for optional parameters based on shape
+    if (shape.type == RECTANGLE) {
+        shape.position3 = (Vector2){0, 0};
+    } else if (shape.type == CIRCLE) {
+        shape.position2 = (Vector2){shape.position2.x, 0};
+        shape.position3 = (Vector2){0, 0};
+    }
+
+    return shape;
+}
+
+void printShape(const Shape *shape) {
+    const char *shapeTypeStr = (shape->type == RECTANGLE) ? "RECTANGLE" :
+                                (shape->type == CIRCLE) ? "CIRCLE" :
+                                (shape->type == TRIANGLE) ? "TRIANGLE" : "UNKNOWN";
+
+    printf("--------------------------\n");
+    printf("Shape: %s\n", shapeTypeStr);
+    printf("Position 1: (%.2f, %.2f)\n", shape->position1.x, shape->position1.y);
+    if (shape->type == RECTANGLE || shape->type == TRIANGLE) {
+        printf("Position 2: (%.2f, %.2f)\n", shape->position2.x, shape->position2.y);
+    } else {
+        printf("Radius %.2f\n", shape->position2.x);
+    }
+    if (shape->type == TRIANGLE) {
+        printf("Position 3: (%.2f, %.2f)\n", shape->position3.x, shape->position3.y);
+    }
+    printf("Color: (%d, %d, %d, %d)\n", shape->color.r, shape->color.g, shape->color.b, shape->color.a);
+    printf("Thickness: %d\n", shape->thickness);
+    printf("Filled: %s\n", shape->filled ? "true" : "false");
+    printf("--------------------------\n");
+}
+
+void drawShape(t_Entity* ent, Shape *shape) {
+
+    switch (shape->type) {
+        case RECTANGLE: {
+            Vector2 pos1 = { ent->position.x + shape->position1.x * ent->scale, ent->position.y + shape->position1.y * ent->scale };
+            if (shape->filled) {
+                DrawRectangle(pos1.x, pos1.y, (shape->position2.x - shape->position1.x) * ent->scale, (shape->position2.y - shape->position1.y) * ent->scale, shape->color);
+            } else {
+                DrawRectangleLinesEx((Rectangle){ pos1.x, pos1.y, (shape->position2.x - shape->position1.x) * ent->scale, (shape->position2.y - shape->position1.y) * ent->scale },
+                                        shape->thickness, shape->color);
+            }
+            break;
+        }
+        case CIRCLE: {
+            if (shape->filled) {
+                DrawCircleV(ent->position, shape->position2.x * ent->scale, shape->color);
+            } else {
+                DrawCircleLines(ent->position.x, ent->position.y, shape->position2.x * ent->scale, shape->color);
+            }
+            break;
+        }
+        case TRIANGLE: {
+            Vector2 pos1 = { ent->position.x + shape->position1.x * ent->scale, ent->position.y + shape->position1.y * ent->scale };
+            Vector2 pos2 = { ent->position.x + shape->position2.x * ent->scale, ent->position.y + shape->position2.y * ent->scale };
+            Vector2 pos3 = { ent->position.x + shape->position3.x * ent->scale, ent->position.y + shape->position3.y * ent->scale };
+            if (shape->filled) {
+                DrawTriangle(pos1, pos2, pos3, shape->color);
+            } else {
+                DrawTriangleLines(pos1, pos2, pos3, shape->color);
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+#pragma endregion
+
+
 int are_floats_equal(float a, float b) {
     return fabs(a - b) < FLT_EPSILON;
 }
@@ -33,6 +134,7 @@ int next_free_entity_slot(const t_EntitySystem* entity_system, const PriorityRan
     return -1;
 }
 
+#pragma region Update
 void update(t_EntitySystem* entity_system) {
     float delta_time = GetFrameTime();
     for (int i = 0; i < entity_system->num_entities; ++i) {
@@ -50,9 +152,6 @@ void update(t_EntitySystem* entity_system) {
         }
 
         if (e->health <= 0) {
-            if (e->priority_rank == PLAYER) {
-                panic("Player has died");
-            }
             printf("%s has died\n", e->entity_name);
             e->is_active = false;
             continue;
@@ -70,7 +169,9 @@ void update(t_EntitySystem* entity_system) {
         }
     }
 }
+#pragma endregion
 
+#pragma region Rendering
 void render(t_EntitySystem* entity_system) {
     char FPS_string[100];
     sprintf_s(FPS_string, 100, "FPS: %d", GetFPS());
@@ -85,16 +186,27 @@ void render(t_EntitySystem* entity_system) {
         t_Entity* e = get_entity(entity_system, i);
         // don't attempt to draw inactive entities, or entities that don't exist. 
         if (e->entity_name == NULL || !e->is_active || has_tag(e, "HIDDEN") != -1) { continue; } 
-        Texture2D texture = e->texture;
         
-        Rectangle destRec = { e->position.x, e->position.y, texture.width * e->scale, texture.height* e->scale };
+        if (e->texture.height != 0 && e->texture.width != 0) {
+            Texture2D texture = e->texture;
+            
+            Rectangle destRec = { e->position.x, e->position.y, texture.width * e->scale, texture.height* e->scale };
 
-        DrawTexturePro(texture, e->source, destRec, e->sprite_origin, 0, WHITE);
+            DrawTexturePro(texture, e->source, destRec, e->sprite_origin, 0, WHITE);
+        } else {
+            drawShape(e, &e->shape);
+        }
     }
-
 }
+#pragma endregion
 
 #pragma endregion
+
+#ifdef WIN32
+#include <io.h>
+#define F_OK 0
+#define access _access
+#endif
 
 #pragma region Methods for base entity
 t_Entity* create_entity(t_EntitySystem* es, char* entity_name, char* texturePath, Vector2 start_position, Vector2 start_velocity, PriorityRank priority_rank, float max_life_time, float scale, float health) {
@@ -124,15 +236,29 @@ t_Entity* create_entity(t_EntitySystem* es, char* entity_name, char* texturePath
     entity.health = health;
 
     entity.scale = scale;
-    int textureid = load_texture(es, texturePath);
-    Texture2D texture = get_texture(es, textureid);
-    entity.texture = texture;
 
-    int frameWidth = texture.width;
-    int frameHeight = texture.height;
+    if (access(texturePath, F_OK) == 0) {
+        int textureid = load_texture(es, texturePath);
+        Texture2D texture = get_texture(es, textureid);
+        entity.texture = texture;
 
-    Vector2 sp = { (float)frameWidth, (float)frameHeight };
-    entity.sprite_origin = sp;
+        int frameWidth = texture.width;
+        int frameHeight = texture.height;
+
+        Vector2 sp = { (float)frameWidth, (float)frameHeight };
+        entity.sprite_origin = sp;
+
+        Rectangle source = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
+        entity.source = source;
+        entity.shape = (Shape){ 0 };
+    } else {
+        entity.texture = (Texture){ 0 };
+        entity.source = (Rectangle){ 0 };
+        entity.sprite_origin = VEC2_ZERO;
+    }
+    
+    if (strncmp("SHAPE", texturePath, strlen(texturePath)))
+        entity.shape = parseShapeString(texturePath);
 
     t_Tag* root = malloc(sizeof(t_Tag));
     root->tag_id = 0;
@@ -143,9 +269,7 @@ t_Entity* create_entity(t_EntitySystem* es, char* entity_name, char* texturePath
     entity.root_tag = root;
     entity.num_tags = 0;
 
-    // this is where we will do sprites
-    Rectangle source = { 0.0f, 0.0f, (float)frameWidth, (float)frameHeight };
-    entity.source = source;
+
 
     es->entities[slot] = entity;
     es->num_entities++;
@@ -172,33 +296,32 @@ t_Entity* get_entity_by_name(t_EntitySystem* es, char* entity_name) {\
 }
 
 bool are_entities_colliding(const t_Entity* e1, const t_Entity* e2) {
+    // TODO: make the hitboxes smaller
     if (e1 == NULL || e2 == NULL || !e1->is_active ||!e2->is_active) {
         //fprintf(stderr, "One of the entities is NULL or inactive\n");
         return false;
     }
-    Texture2D texture1 = e1->texture;
-    Texture2D texture2 = e2->texture;
 
-    Vector2 e1_pos1 = e1->position;
-    Vector2 e1_pos2 = { e1->position.x + texture1.width * e1->scale, e1->position.y + texture1.height * e1->scale };
+    Rectangle rect1 = {
+        e1->position.x - e1->sprite_origin.x, 
+        e1->position.y - e1->sprite_origin.y, 
+        e1->texture.width * e1->scale, 
+        e1->texture.height * e1->scale
+    };
 
-    Vector2 e2_pos1 = e2->position;
-    Vector2 e2_pos2 = { e2->position.x + texture2.width * e2->scale, e2->position.y + texture2.height * e2->scale };
-    
-    #ifdef COLLISION_DEBUG
-        printf("---------------------\n");
-        printf("e1_pos1: %f, %f \n", e1_pos1.x, e1_pos1.y);
-        printf("e1_pos2: %f, %f \n", e1_pos2.x, e1_pos2.y);
+    Rectangle rect2 = {
+        e2->position.x - e2->sprite_origin.x, 
+        e2->position.y - e2->sprite_origin.y, 
+        e2->texture.width * e2->scale, 
+        e2->texture.height * e2->scale
+    };
 
-        printf("e2_pos1: %f, %f \n", e2_pos1.x, e2_pos1.y);
-        printf("e2_pos2: %f, %f \n", e2_pos2.x, e2_pos2.y);
-        printf("---------------------\n");
-    #endif
+    DrawRectangleLinesEx(rect1, 2, RED);
+    DrawRectangleLinesEx(rect2, 2, RED);
 
-    bool collision_x = e1_pos1.x < e2_pos2.x && e1_pos2.x > e2_pos1.x;
-    bool collision_y = e1_pos1.y < e2_pos2.y && e1_pos2.y > e2_pos1.y;
 
-    return collision_x && collision_y;
+    // Check if the rectangles collide
+    return CheckCollisionRecs(rect1, rect2);
 
 }
 

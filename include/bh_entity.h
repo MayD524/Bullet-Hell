@@ -18,6 +18,23 @@ static const Vector2 VEC2_ONE = { 1.0f, 1.0f };
 #define MAX_ENTITIES 100000
 #define MAX_TEXTURES 100000
 
+typedef enum {
+    RECTANGLE,
+    CIRCLE,
+    TRIANGLE,
+    UNKNOWN
+} ShapeType;
+
+typedef struct {
+    ShapeType type;
+    Vector2 position1;
+    Vector2 position2;
+    Vector2 position3;
+    Color color;
+    int thickness;
+    bool filled;
+} Shape;
+
 // allows for us to have different types of entities.
 // and if we run out of entity slots, we can remove
 // other entities based on their priority rank.
@@ -52,6 +69,7 @@ typedef struct s_Entity {
     Vector2 velocity;
     Vector2 sprite_origin;
 
+    Shape  shape;
     Texture2D texture;
     Rectangle source;
     float rotation;

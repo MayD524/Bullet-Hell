@@ -60,11 +60,11 @@ int main() {
     load_texture(g_entity_system, PLAYER_PROJECTILE_PATH);
     
     Player* player = create_player(g_entity_system, PLAYER_START_POSITION);
+    t_PlayerData* pdata = player->entity_data;
     printf("Player: %p\n", player);
     // print_tags(player);
 
     printf("func_refs: %p\n", g_lua_context->func_refs);
-
     t_FileSearch file_search = GetFilesInDirectory(LUA_DIR);
     for (int i = 0; i < file_search.file_count; i++) {
         printf("loading %s...\n", file_search.files[i]);
@@ -82,14 +82,20 @@ int main() {
         render(g_entity_system);
         call_functions(g_lua_context, POST_RENDER);
 
+        if (player->health <= 0 && pdata->lives_left > 0) {
+            pdata->lives_left--;
+            player->health = PLAYER_DEFAULT_HEALTH;
+            player->position = PLAYER_START_POSITION;
+        } else if (player->health <= 0 && pdata->lives_left <=0) {
+            panic("Player died");
+        }
+
         update(g_entity_system);
         call_functions(g_lua_context, UPDATE);
 
         // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
         EndDrawing();
     }
-
-    call_functions(g_lua_context, ON_DESTROY);
 
     close_lua(g_lua_context);
     CloseWindow();
